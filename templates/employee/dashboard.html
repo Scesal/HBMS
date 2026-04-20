@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Employee — All Bookings{% endblock %}
+
+{% block content %}
+<h2 class="section-title mb-4">All Bookings</h2>
+
+{% if bookings %}
+<div class="table-responsive">
+  <table class="table table-hover align-middle bg-white rounded shadow-sm">
+    <thead style="background:var(--hbms-navy);color:#fff">
+      <tr>
+        <th>#ID</th>
+        <th>Customer</th>
+        <th>Hotel / Room</th>
+        <th>Check-in</th>
+        <th>Check-out</th>
+        <th>Total (₹)</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in bookings %}
+      <tr>
+        <td class="text-muted">{{ b.booking_id }}</td>
+        <td>
+          <div class="fw-semibold">{{ b.customer_name }}</div>
+          <small class="text-muted">{{ b.customer_email }}</small>
+        </td>
+        <td>
+          <div>{{ b.hotel_name }}, {{ b.city }}</div>
+          <small class="text-muted">Room {{ b.room_number }}
+            <span class="badge bg-secondary">{{ b.room_type }}</span>
+          </small>
+        </td>
+        <td>{{ b.check_in_date }}</td>
+        <td>{{ b.check_out_date }}</td>
+        <td class="fw-bold">{{ "%.2f"|format(b.total_price) }}</td>
+        <td>
+          <span class="badge badge-{{ b.status|lower }}">{{ b.status }}</span>
+        </td>
+        <td>
+          {% if b.status == 'Confirmed' %}
+          <form method="POST"
+                action="{{ url_for('employee_cancel_booking', booking_id=b.booking_id) }}"
+                onsubmit="return confirm('Cancel booking #{{ b.booking_id }}?')">
+            <button class="btn btn-sm btn-danger">
+              <i class="bi bi-x-circle me-1"></i>Cancel
+            </button>
+          </form>
+          {% else %}
+            <span class="text-muted small">—</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+  <i class="bi bi-journal-x" style="font-size:3rem;opacity:.3"></i>
+  <p class="mt-2">No bookings in the system yet.</p>
+</div>
+{% endif %}
+{% endblock %}

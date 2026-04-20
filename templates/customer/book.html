@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Book Room {{ room.room_number }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .summary-box {
+    background: var(--hbms-navy);
+    color: #fff;
+    border-radius: 12px;
+    padding: 1.75rem;
+  }
+  .summary-box .label { color: rgba(255,255,255,.55); font-size:.85rem; }
+  .price-tag { font-size:1.6rem; font-family:'Playfair Display',serif; color:var(--hbms-gold); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center g-4">
+
+  <!-- Booking form -->
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header py-3">
+        <h5 class="mb-0">
+          <i class="bi bi-calendar-plus me-2"></i>
+          Book Room {{ room.room_number }} — {{ room.hotel_name }}
+        </h5>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST" id="bookForm">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Check-in Date *</label>
+            <input type="date" name="check_in" id="checkIn" class="form-control"
+                   min="{{ today }}" required>
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Check-out Date *</label>
+            <input type="date" name="check_out" id="checkOut" class="form-control"
+                   min="{{ today }}" required>
+          </div>
+
+          <!-- Live price estimate -->
+          <div class="alert alert-light border mb-4" id="priceEstimate" style="display:none">
+            <i class="bi bi-info-circle me-1"></i>
+            Estimated total: <strong id="priceVal"></strong>
+            (<span id="nightsVal"></span> nights × ₹{{ "%.2f"|format(room.price_per_night) }})
+          </div>
+
+          <p class="text-muted small">
+            <i class="bi bi-shield-check me-1 text-success"></i>
+            No payment required at this stage. Payment is collected at check-in.
+          </p>
+
+          <button type="submit" class="btn btn-gold w-100 py-2">
+            <i class="bi bi-check-circle me-2"></i>Confirm Booking
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary panel -->
+  <div class="col-lg-4">
+    <div class="summary-box">
+      <p class="label mb-1">PROPERTY</p>
+      <h6 class="fw-bold mb-3">{{ room.hotel_name }}, {{ room.city }}</h6>
+
+      <p class="label mb-1">ROOM</p>
+      <p class="mb-3">
+        Room {{ room.room_number }}
+        <span class="badge bg-secondary ms-1">{{ room.room_type }}</span>
+      </p>
+
+      {% if room.amenities %}
+      <p class="label mb-1">AMENITIES</p>
+      <p class="mb-3 small">{{ room.amenities }}</p>
+      {% endif %}
+
+      <p class="label mb-0">RATE</p>
+      <p class="price-tag mb-0">₹{{ "%.2f"|format(room.price_per_night) }}<small class="text-white-50" style="font-size:.9rem"> / night</small></p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const rate = {{ room.price_per_night }};
+  const ci   = document.getElementById('checkIn');
+  const co   = document.getElementById('checkOut');
+
+  function updateEstimate() {
+    if (!ci.value || !co.value) return;
+    const nights = (new Date(co.value) - new Date(ci.value)) / 86400000;
+    if (nights <= 0) { document.getElementById('priceEstimate').style.display='none'; return; }
+    document.getElementById('nightsVal').textContent = nights;
+    document.getElementById('priceVal').textContent  = '₹' + (nights * rate).toLocaleString('en-IN', {minimumFractionDigits:2});
+    document.getElementById('priceEstimate').style.display = 'block';
+    // Set min of checkout to one day after checkin
+    co.min = ci.value;
+  }
+
+  ci.addEventListener('change', updateEstimate);
+  co.addEventListener('change', updateEstimate);
+
+  // Set today as default min
+  const today = new Date().toISOString().split('T')[0];
+  ci.min = today;
+</script>
+{% endblock %}

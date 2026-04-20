@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Hotel{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header py-3">
+        <h5 class="mb-0"><i class="bi bi-building-gear me-2"></i>{{ action }} Hotel</h5>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label fw-semibold">Hotel Name *</label>
+              <input type="text" name="name" class="form-control"
+                     value="{{ hotel.name if hotel else '' }}" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Rating (0–5)</label>
+              <input type="number" name="rating" class="form-control"
+                     min="0" max="5" step="0.1"
+                     value="{{ hotel.rating if hotel else '4.0' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">City *</label>
+              <input type="text" name="city" class="form-control"
+                     value="{{ hotel.city if hotel else '' }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Image URL</label>
+              <input type="url" name="image_url" class="form-control"
+                     value="{{ hotel.image_url if hotel else '' }}"
+                     placeholder="https://...">
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Address *</label>
+              <input type="text" name="address" class="form-control"
+                     value="{{ hotel.address if hotel else '' }}" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Description</label>
+              <textarea name="description" class="form-control" rows="3">{{ hotel.description if hotel else '' }}</textarea>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-gold px-4">
+              <i class="bi bi-check-lg me-1"></i>{{ action }} Hotel
+            </button>
+            <a href="{{ url_for('admin_hotels') }}" class="btn btn-outline-secondary px-4">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

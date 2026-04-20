@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="section-title mb-4">Admin Dashboard</h2>
+
+<!-- Stats row -->
+<div class="row g-4 mb-5">
+  {% set stat_items = [
+    ('total_hotels',   'bi-building',       'Hotels',    '#admin_hotels'),
+    ('total_rooms',    'bi-door-open',      'Rooms',     '#'),
+    ('total_bookings', 'bi-calendar-check', 'Bookings',  '#'),
+    ('total_customers','bi-people',         'Customers', '#'),
+  ] %}
+  {% for key, icon, label, link in stat_items %}
+  <div class="col-sm-6 col-xl-3">
+    <div class="card text-center p-4">
+      <i class="bi {{ icon }} mb-2" style="font-size:2rem;color:var(--hbms-gold)"></i>
+      <h2 class="fw-bold mb-0" style="font-family:'Playfair Display',serif">
+        {{ stats[key] }}
+      </h2>
+      <p class="text-muted mb-0">{{ label }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Quick actions -->
+<h5 class="section-title mb-3">Quick Actions</h5>
+<div class="row g-3">
+  <div class="col-md-4">
+    <a href="{{ url_for('admin_hotels') }}" class="card text-decoration-none p-4 d-flex flex-row align-items-center gap-3">
+      <i class="bi bi-building-gear" style="font-size:2rem;color:var(--hbms-gold)"></i>
+      <div>
+        <h6 class="mb-0 fw-semibold">Manage Hotels</h6>
+        <small class="text-muted">Add, edit, or delete hotels</small>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-4">
+    <a href="{{ url_for('admin_add_hotel') }}" class="card text-decoration-none p-4 d-flex flex-row align-items-center gap-3">
+      <i class="bi bi-plus-circle" style="font-size:2rem;color:var(--hbms-gold)"></i>
+      <div>
+        <h6 class="mb-0 fw-semibold">Add New Hotel</h6>
+        <small class="text-muted">Register a new property</small>
+      </div>
+    </a>
+  </div>
+</div>
+{% endblock %}

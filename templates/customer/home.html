@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Find Your Stay{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero-banner {
+    background: linear-gradient(135deg, var(--hbms-navy) 60%, #1e3a5f);
+    border-radius: 16px;
+    padding: 3.5rem 2.5rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-banner::after {
+    content: '🏨';
+    position: absolute;
+    right: 2rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 7rem;
+    opacity: .08;
+  }
+  .hero-banner h1 { font-family:'Playfair Display',serif; font-size:2.4rem; }
+  .search-box { background:#fff; border-radius:50px; overflow:hidden; }
+  .hotel-card img { height:180px; object-fit:cover; border-radius:12px 12px 0 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero search -->
+<div class="hero-banner mb-5">
+  <h1 class="mb-1">Find Your Perfect Stay</h1>
+  <p class="text-white-50 mb-4">Search from our curated collection of hotels across India.</p>
+  <form action="{{ url_for('search_hotels') }}" method="GET">
+    <div class="input-group search-box shadow" style="max-width:520px">
+      <input type="text" name="city" class="form-control border-0 py-3 ps-4"
+             placeholder="Search by city…" required>
+      <button class="btn btn-gold px-4" type="submit">
+        <i class="bi bi-search me-1"></i>Search
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- All hotels -->
+<h4 class="section-title mb-4">All Properties</h4>
+
+{% if hotels %}
+<div class="row g-4">
+  {% for hotel in hotels %}
+  <div class="col-sm-6 col-xl-4">
+    <div class="card h-100">
+      {% if hotel.image_url %}
+        <img src="{{ hotel.image_url }}" alt="{{ hotel.name }}">
+      {% else %}
+        <div class="d-flex align-items-center justify-content-center bg-light"
+             style="height:180px;border-radius:12px 12px 0 0">
+          <i class="bi bi-building" style="font-size:3rem;color:var(--hbms-gold)"></i>
+        </div>
+      {% endif %}
+      <div class="card-body">
+        <h6 class="fw-bold mb-1">{{ hotel.name }}</h6>
+        <p class="text-muted small mb-1">
+          <i class="bi bi-geo-alt-fill me-1" style="color:var(--hbms-gold)"></i>
+          {{ hotel.city }}
+        </p>
+        <span class="stars small">
+          {% for i in range(hotel.rating | int) %}★{% endfor %}
+        </span>
+        <p class="text-muted small mt-2 mb-3">{{ hotel.description[:80] ~ '…' if hotel.description and hotel.description|length > 80 else hotel.description }}</p>
+        <a href="{{ url_for('view_rooms', hotel_id=hotel.hotel_id) }}"
+           class="btn btn-gold btn-sm w-100">
+          <i class="bi bi-door-open me-1"></i>View Rooms
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+  <i class="bi bi-building" style="font-size:3rem;opacity:.3"></i>
+  <p class="mt-2">No hotels available at the moment.</p>
+</div>
+{% endif %}
+{% endblock %}
