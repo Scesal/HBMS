@@ -18,7 +18,18 @@ import models
 app = Flask(__name__)
 app.secret_key = "hbms-super-secret-key-change-in-production"
 
+import sqlite3
 
+def init_db():
+    # This creates the file if it doesn't exist
+    conn = sqlite3.connect('hbms.db') 
+    with open('schema.sql', 'r') as f:
+        conn.executescript(f.read())
+    conn.close()
+
+# Run this once to setup the database
+if not os.path.exists('hbms.db'):
+    init_db()
 # ---------------------------------------------------------------------------
 # App initialisation
 # ---------------------------------------------------------------------------
