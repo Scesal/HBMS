@@ -19,7 +19,7 @@ app = Flask(__name__)
 app.secret_key = "hbms-super-secret-key-change-in-production"
 
 import sqlite3
-
+import os
 def init_db():
     # This creates the file if it doesn't exist
     conn = sqlite3.connect('hbms.db') 
